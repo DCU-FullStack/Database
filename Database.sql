@@ -3,9 +3,14 @@ CREATE DATABASE IF NOT EXISTS chillcoder;
 SHOW TABLES;
 USE chillcoder_local;
 select * from users;
-
--- truncate table users;
-
+select * from cameras;
+select * from incidents;
+select * from tasks;
+select * from help_request_entity;
+ 
+TRUNCATE TABLE incidents;
+ALTER TABLE tasks AUTO_INCREMENT = 1;
+ALTER TABLE incidents AUTO_INCREMENT = 1;
 -- 사용자 테이블 (이메일과 전화번호 추가)
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -18,32 +23,39 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- 사고 테이블
-CREATE TABLE IF NOT EXISTS incidents (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE incidents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    camera_id BIGINT NOT NULL,
     title VARCHAR(255) NOT NULL,
+    detection_type VARCHAR(50) NOT NULL,
+    confidence FLOAT NOT NULL,
     location VARCHAR(255) NOT NULL,
-    reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+    timestamp TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (camera_id) REFERENCES cameras(id)
+); 
 
 -- 작업 테이블
-CREATE TABLE IF NOT EXISTS tasks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE tasks (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL,
-    reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED') NOT NULL DEFAULT 'PENDING'
+    detection_type VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'IN_PROGRESS',
+    incident_id BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (incident_id) REFERENCES incidents(id)
 );
 
--- CCTV 카메라 테이블
 CREATE TABLE IF NOT EXISTS cameras (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    image_url TEXT
+    status VARCHAR(20) NOT NULL DEFAULT '온라인',
+    image_url VARCHAR(255)
 );
-
-
 
 
 
