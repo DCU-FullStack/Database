@@ -7,11 +7,7 @@ select * from cameras;
 select * from incidents;
 select * from tasks;
 select * from help_request_entity;
- 
-TRUNCATE TABLE incidents;
-ALTER TABLE tasks AUTO_INCREMENT = 1;
-ALTER TABLE incidents AUTO_INCREMENT = 1;
--- 사용자 테이블 (이메일과 전화번호 추가)
+
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
